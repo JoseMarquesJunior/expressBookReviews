@@ -15,17 +15,14 @@ public_users.post("/register", (req,res) => {
     }
 
     // Check if the username already exists
-    if (users.hasOwnProperty(username)) {
+    if (!isValid(users, username)) {
         return res.status(409).json({ message: "Username already exists. Choose a different username." });
     }
 
     // Register the new user
-    users[username] = {
-        username: username,
-        password: password
-    };
-
-    return res.status(201).json({ message: "User registered successfully." });
+    users.push({"username":username,"password":password});
+    //console.log(users)
+    return res.status(201).json({ message: "User registered successfully."});
 
 });
 
