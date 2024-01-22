@@ -50,10 +50,52 @@ regd_users.post("/login", (req,res) => {
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-  //Write your code here
-  console.log(users)
-  return res.status(300).json({message: "Yet to be implemented"});
+    const username = req.session.authorization.username; // Retrieve username from session
+
+    const isbn = req.params.isbn;
+    const reviewText = req.query.review;
+
+    if (!reviewText) {
+        return res.status(400).json({ message: "Review text is required." });
+    }
+
+    // Check if the book with the specified ISBN exists
+    if (!books[isbn]) {
+        return res.status(404).json({ message: "Book not found." });
+    }
+
+    // Check if the user has already reviewed the book
+    if (books[isbn].reviews.hasOwnProperty(username)) {
+        // Modify the existing review
+        books[isbn].reviews[username] = reviewText;
+        return res.status(200).json({ message: "Review modified successfully." });
+    } else {
+        // Add a new review
+        books[isbn].reviews[username] = reviewText;
+        return res.status(201).json({ message: "Review added successfully." });
+    }
+
 });
+
+// Delete a book review
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+    const username = req.session.authorization.username; // Retrieve username from session
+    const isbn = req.params.isbn;
+  
+    // Check if the book with the specified ISBN exists
+    if (!books[isbn]) {
+      return res.status(404).json({ message: "Book not found." });
+    }
+  
+    // Check if the user has a review for the specified ISBN
+    if (books[isbn].reviews.hasOwnProperty(username)) {
+      // Delete the user's review
+      delete books[isbn].reviews[username];
+      return res.status(200).json({ message: "Review deleted successfully." });
+    } else {
+      return res.status(404).json({ message: "Review not found." });
+    }
+  });
 
 module.exports.authenticated = regd_users;
 module.exports.authenticatedUser = authenticatedUser;
