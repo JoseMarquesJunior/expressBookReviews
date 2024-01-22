@@ -3,6 +3,7 @@ let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
+const axios = require('axios');
 
 
 public_users.post("/register", (req,res) => {
@@ -97,4 +98,48 @@ public_users.get('/review/:isbn',function (req, res) {
   }
 });
 
+// Function to get the list of books using async-await with Axios
+const getBooksAsync = async () => {
+    try {
+      const response = await axios.get('https://jmarquesoliv-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/books'); // Replace with your API endpoint
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching books:', error.message);
+      throw error;
+    }
+  };
+
+  // Function to get book details using async-await with Axios
+const getBookDetailsAsync = async (isbn) => {
+    try {
+        const response = await axios.get(`https://jmarquesoliv-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/books/isbn/${isbn}`); // Replace with your API endpoint
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching book details:', error.message);
+        throw error;
+    }
+};
+
+// Function to get books by author using async-await with Axios
+const getBooksByAuthorAsync = async (author) => {
+    try {
+        const response = await axios.get(`https://jmarquesoliv-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/books/author/${author}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching books by author:', error.message);
+        throw error;
+    }
+
+    
+    // Function to get books by title using async-await with Axios
+const getBooksByTitleAsync = async (title) => {
+    try {
+        const response = await axios.get(`https://jmarquesoliv-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/books/title/${title}`); 
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching books by title:', error.message);
+        throw error;
+    }
+};
 module.exports.general = public_users;
+module.exports = getBooksAsync;

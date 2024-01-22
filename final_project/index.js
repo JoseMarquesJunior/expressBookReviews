@@ -4,6 +4,8 @@ const session = require('express-session')
 const customer_routes = require('./router/auth_users.js').authenticated;
 const genl_routes = require('./router/general.js').general;
 let authenticatedUser = require('./router/auth_users.js').authenticatedUser; // Corrigi a importação aqui
+const { getBooksAsync } = require('./router/general.js'); // Adjust the path accordingly
+const axios = require('axios');
 
 //comentário
 const app = express();
@@ -30,11 +32,20 @@ app.use("/customer/auth/*", function auth(req,res,next){
      }
     
 });
- 
+
+app.get('/books', async (req, res) => {
+    try {
+      const books = await getBooksAsync();
+      res.json({ books });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  
 const PORT =5000;
 
 // Add the route before customer_routes
-app.use("/customer", require('./router/auth_users.js').authenticated);
 app.use("/customer", customer_routes);
 app.use("/", genl_routes);
 
